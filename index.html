@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* Your existing CSS remains the same */
         :root {
             --text-primary: #ffffff;
             --text-accent: #ff85a2;
@@ -34,6 +33,7 @@
             min-height: 100vh;
         }
 
+        /* Cute animated background */
         .bg-hearts {
             position: fixed;
             width: 100%;
@@ -55,6 +55,7 @@
             50% { transform: translateY(-30px) rotate(15deg); }
         }
 
+        /* Main sections */
         .section {
             position: absolute;
             width: 100%;
@@ -75,6 +76,7 @@
             visibility: visible;
         }
 
+        /* Cute cards */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(20px);
@@ -125,6 +127,7 @@
             color: rgba(255, 255, 255, 0.85);
         }
 
+        /* Adorable buttons */
         .btn {
             background: var(--btn-gradient);
             border: none;
@@ -152,6 +155,7 @@
             transform: scale(0.96);
         }
 
+        /* Floating emojis */
         .floating-emoji {
             position: absolute;
             font-size: 2.5rem;
@@ -166,6 +170,7 @@
             100% { transform: translateY(-150px) scale(1.5) rotate(20deg); opacity: 0; }
         }
 
+        /* Heart vault */
         .heart-vault {
             font-size: clamp(5rem, 20vw, 8rem);
             cursor: pointer;
@@ -180,6 +185,7 @@
             50% { transform: translateY(-20px) scale(1.05); }
         }
 
+        /* Memory cards */
         .memories {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -219,6 +225,7 @@
             margin-bottom: 8px;
         }
 
+        /* GIF overlay */
         .gif-overlay {
             position: fixed;
             top: 0;
@@ -245,6 +252,7 @@
             text-align: center;
         }
 
+        /* Music toggle */
         .music-toggle {
             position: fixed;
             top: 15px;
@@ -262,9 +270,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
         }
 
         .music-toggle.playing {
+            background: #ff4d6d;
             animation: pulse 1.5s infinite;
         }
 
@@ -273,6 +283,16 @@
             50% { box-shadow: 0 0 20px #ff85a2; }
         }
 
+        /* Hidden YouTube player */
+        #youtube-player {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: none;
+            visibility: hidden;
+        }
+
+        /* Celebration photo frame */
         .photo-frame {
             width: clamp(160px, 40vw, 220px);
             height: clamp(160px, 40vw, 220px);
@@ -290,6 +310,7 @@
             object-fit: cover;
         }
 
+        /* Progress bar */
         .progress-bar {
             position: fixed;
             bottom: 0;
@@ -314,21 +335,34 @@
                 justify-content: center;
             }
         }
+
+        /* Music status indicator */
+        .music-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
-    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-bar" id="progressBar" style="width: 14.28%;"></div>
 
     <!-- Music Toggle Button -->
     <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+    
+    <!-- Music Status (optional) -->
+    <div class="music-status" id="musicStatus">🎵 Click to play "Perfect"</div>
 
-    <!-- Audio Player with working music (using free audio file) -->
-    <audio id="bgMusic" loop preload="auto">
-        <!-- Using a free, reliable audio file from Pixabay (CC0 license) -->
-        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7645c34a1d.mp3?filename=romantic-moment-109474.mp3" type="audio/mpeg">
-        <!-- Fallback message if audio cannot be played -->
-        Your browser does not support the audio element.
-    </audio>
+    <!-- Hidden YouTube Player Container -->
+    <div id="youtube-player"></div>
 
     <!-- GIF Overlay -->
     <div class="gif-overlay" id="gifOverlay">
@@ -439,54 +473,106 @@
     </section>
 
     <script>
-        // Get audio element
-        const audio = document.getElementById('bgMusic');
+        // YouTube API Variables
+        let ytPlayer;
+        let ytReady = false;
         let isMusicPlaying = false;
-        let audioLoaded = false;
 
-        // Check if audio can be played
-        audio.addEventListener('canplaythrough', function() {
-            audioLoaded = true;
-            console.log('Audio loaded successfully');
-        });
+        // Load YouTube IFrame API
+        function loadYouTubeAPI() {
+            const tag = document.createElement('script');
+            tag.src = 'https://www.youtube.com/iframe_api';
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        }
 
-        audio.addEventListener('error', function(e) {
-            console.error('Audio error:', e);
-            // Fallback message
+        // Called when YouTube API is ready
+        window.onYouTubeIframeAPIReady = function() {
+            ytPlayer = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: 'SAcpESN_Fk4', // Your song: Ed Sheeran - Perfect
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'disablekb': 1,
+                    'enablejsapi': 1,
+                    'fs': 0,
+                    'loop': 1,
+                    'modestbranding': 1,
+                    'playsinline': 1,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'playlist': 'SAcpESN_Fk4' // Required for looping
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        };
+
+        function onPlayerReady(event) {
+            ytReady = true;
+            console.log('YouTube player ready!');
+            updateMusicStatus('Ready to play');
+            
+            // Set volume to 50%
+            ytPlayer.setVolume(50);
+        }
+
+        function onPlayerStateChange(event) {
+            // When video ends, replay it (loop)
+            if (event.data === YT.PlayerState.ENDED) {
+                ytPlayer.playVideo();
+            }
+        }
+
+        function onPlayerError(event) {
+            console.error('YouTube player error:', event.data);
+            updateMusicStatus('Error loading music');
+            
+            // Show user-friendly error
             const btn = document.getElementById('musicToggle');
             btn.style.opacity = '0.5';
-            btn.title = 'Audio could not be loaded';
-        });
+            btn.title = 'Music could not be loaded';
+        }
 
+        function updateMusicStatus(text) {
+            const statusEl = document.getElementById('musicStatus');
+            if (statusEl) {
+                statusEl.textContent = isMusicPlaying ? '🔊 Now playing: Perfect' : `🎵 ${text}`;
+            }
+        }
+
+        // Toggle music play/pause
         function toggleMusic() {
             const btn = document.getElementById('musicToggle');
             
-            if (!audioLoaded) {
-                alert('Audio is still loading. Please try again in a moment.');
+            if (!ytReady || !ytPlayer) {
+                alert('Music player is still loading. Please try again in a moment.');
                 return;
             }
 
-            if (!isMusicPlaying) {
-                // Try to play audio
-                let playPromise = audio.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        // Playback started successfully
-                        isMusicPlaying = true;
-                        btn.innerHTML = '🔊';
-                        btn.classList.add('playing');
-                    }).catch(error => {
-                        // Auto-play was prevented
-                        console.log("Playback failed:", error);
-                        alert('Please click again to play music (browser restrictions)');
-                    });
+            try {
+                if (!isMusicPlaying) {
+                    // YouTube requires user interaction to play (browser policy)
+                    ytPlayer.playVideo();
+                    isMusicPlaying = true;
+                    btn.innerHTML = '🔊';
+                    btn.classList.add('playing');
+                    updateMusicStatus('Now playing: Perfect');
+                } else {
+                    ytPlayer.pauseVideo();
+                    isMusicPlaying = false;
+                    btn.innerHTML = '🎵';
+                    btn.classList.remove('playing');
+                    updateMusicStatus('Paused');
                 }
-            } else {
-                audio.pause();
-                isMusicPlaying = false;
-                btn.innerHTML = '🎵';
-                btn.classList.remove('playing');
+            } catch (e) {
+                console.error('Music toggle error:', e);
+                alert('Could not play music. Please try again.');
             }
         }
 
@@ -535,9 +621,10 @@
         }
 
         function startJourney() {
-            // Try to play music (browser may block autoplay)
-            if (audioLoaded && !isMusicPlaying) {
-                toggleMusic();
+            // Try to play music (user interaction required for autoplay)
+            if (ytReady && !isMusicPlaying) {
+                // Most browsers block autoplay, so we'll just enable the button
+                updateMusicStatus('Click the music button to play');
             }
             nextSection('vault');
         }
@@ -601,12 +688,27 @@
             });
         }
 
+        // Handle user interaction for browsers that require it
+        function enableMusicOnInteraction() {
+            document.removeEventListener('click', enableMusicOnInteraction);
+            document.removeEventListener('touchstart', enableMusicOnInteraction);
+            
+            // Update status to remind user to click music button
+            updateMusicStatus('Click 🎵 to play');
+        }
+
+        // Add interaction listeners
+        document.addEventListener('click', enableMusicOnInteraction);
+        document.addEventListener('touchstart', enableMusicOnInteraction);
+
+        // Load YouTube API
+        loadYouTubeAPI();
+
         // Initialize progress bar
-        document.getElementById('progressBar').style.width = '14.28%'; // 1/7 of sections
-        
-        console.log('💝 Made with love for someone special');
+        console.log('💝 Made with love - featuring "Perfect" by Ed Sheeran');
     </script>
 
-    <!-- Tenor embed script (already included) -->
+    <!-- Tenor embed script -->
+    <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
 </body>
 </html>
