@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You, With Love 💝</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Updated Color Palette for better contrast and vibrancy */
+            --text-primary: #ffffff;
+            --text-accent: #ff85a2;
+            --btn-gradient: linear-gradient(45deg, #ff4d6d, #ff85a2);
+            --card-bg: rgba(20, 10, 30, 0.7);
+            --gold: #ffd700;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #0f051d 0%, #2d1b3a 100%);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Cute animated background */
+        .bg-hearts {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .bg-hearts span {
+            position: absolute;
+            color: rgba(255, 133, 162, 0.3);
+            font-size: 20px;
+            animation: float 6s infinite ease-in-out;
+            user-select: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(15deg); }
+        }
+
+        /* Main sections */
+        .section {
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 20px;
+            overflow-y: auto; /* Allow scrolling if content is too tall on mobile */
+        }
+
+        .section.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Cute cards */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: clamp(20px, 5vw, 40px);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255, 133, 162, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: cardGlow 4s infinite alternate;
+        }
+
+        @keyframes cardGlow {
+            0% { box-shadow: 0 20px 40px rgba(255, 77, 109, 0.2); }
+            100% { box-shadow: 0 20px 60px rgba(255, 77, 109, 0.5); border-color: rgba(255, 255, 255, 0.3); }
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #fff, var(--text-accent), #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        h2 {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            margin-bottom: 20px;
+            color: var(--text-accent);
+            font-weight: 600;
+        }
+
+        p {
+            font-size: clamp(0.95rem, 3vw, 1.15rem);
+            line-height: 1.6;
+            margin-bottom: 25px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Adorable buttons */
+        .btn {
+            background: var(--btn-gradient);
+            border: none;
+            padding: 14px 32px;
+            border-radius: 50px;
+            color: white;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+            position: relative;
+            margin: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(255, 77, 109, 0.6);
+            background: linear-gradient(45deg, #ff758c, #ff4d6d);
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Floating emojis */
+        .floating-emoji {
+            position: absolute;
+            font-size: 2.5rem;
+            pointer-events: none;
+            z-index: 1000;
+            animation: floatUp 3s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5) rotate(0deg); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(-150px) scale(1.5) rotate(20deg); opacity: 0; }
+        }
+
+        /* Heart vault */
+        .heart-vault {
+            font-size: clamp(5rem, 20vw, 8rem);
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 0 15px var(--text-accent));
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        /* Memory cards */
+        .memories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .memory-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid rgba(255, 133, 162, 0.3);
+            transition: 0.3s;
+        }
+
+        .memory-card h3 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .memory-card p {
+            font-size: 0.8rem;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        .memory-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        /* GIF overlay */
+        .gif-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .gif-content {
+            background: #1a0b2e;
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 30px;
+            border: 2px solid var(--text-accent);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Music toggle */
+        .music-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Celebration photo frame */
+        .photo-frame {
+            width: clamp(160px, 40vw, 220px);
+            height: clamp(160px, 40vw, 220px);
+            margin: 15px auto;
+            border-radius: 50%;
+            border: 4px solid var(--text-accent);
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.6);
+            position: relative;
+        }
+
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: var(--btn-gradient);
+            width: 0%;
+            transition: width 0.4s ease;
+            z-index: 1000;
+        }
+
+        /* Utility for mobile stacking */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+        }
+
+        @media (min-width: 480px) {
+            .btn-group {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+
+    <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+    <!-- Audio Player for uploaded file -->
+    <audio id="bgMusic" loop>
+        <source src="http://googleusercontent.com/file_content/1" type="audio/mpeg">
+    </audio>
+
+    <div class="gif-overlay" id="gifOverlay">
+        <div class="gif-content">
+            <h2 style="font-family: 'Dancing Script';">Nice try, Gorgeous! 💕</h2>
+            <div class="tenor-gif-embed" data-postid="4931412049723616980" data-share-method="host" data-width="100%"></div>
+            <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+            <button class="btn" onclick="closeGif()" style="margin-top: 20px; width: 100%;">You caught me! 🥰</button>
+        </div>
+    </div>
+
+    <div class="bg-hearts" id="bgHearts"></div>
+
+    <!-- Sections -->
+    <section class="section active" id="landing">
+        <div class="card">
+            <h1>Hey Beautiful! ✨</h1>
+            <p>I crafted a little piece of digital magic just for you. Ready to dive into my heart?</p>
+            <button class="btn" onclick="startJourney()">Open My Heart 💝</button>
+        </div>
+    </section>
+
+    <section class="section" id="vault">
+        <div class="card">
+            <h2>🔐 A Secret Vault</h2>
+            <div class="heart-vault" onclick="nextSection('smitten')">💎</div>
+            <p>Tap the diamond to see what's hidden inside...</p>
+        </div>
+    </section>
+
+    <section class="section" id="smitten">
+        <div class="card">
+            <h1>Totally Smitten 🥰</h1>
+            <p>I'm not going to lie—you've completely taken over my thoughts. Every notification from you makes my day instantly brighter!</p>
+            <button class="btn" onclick="nextSection('memories')">See the Magic ✨</button>
+        </div>
+    </section>
+
+    <section class="section" id="memories">
+        <div class="card">
+            <h1>Celestial Vibes ✨</h1>
+            <div class="memories">
+                <div class="memory-card" onclick="createFloatingEmojis(['🥰', '💕', '✨'])">
+                    <div class="memory-emoji">🫠</div>
+                    <h3>Your Smile</h3>
+                    <p>My favorite view in the world.</p>
+                </div>
+                <div class="memory-card" onclick="createFloatingEmojis(['💫', '⭐', '🌟'])">
+                    <div class="memory-emoji">💫</div>
+                    <h3>Your Energy</h3>
+                    <p>Simply out of this world.</p>
+                </div>
+                <div class="memory-card" onclick="createFloatingEmojis(['💖', '❤️', '💗'])">
+                    <div class="memory-emoji">💝</div>
+                    <h3>Your Kindness</h3>
+                    <p>The most beautiful part.</p>
+                </div>
+            </div>
+            <button class="btn" onclick="nextSection('forgive')">One more thing... 🤫</button>
+        </div>
+    </section>
+
+    <section class="section" id="forgive">
+        <div class="card">
+            <h1>Stay with Me? 💕</h1>
+            <p>I want to keep making you smile like this every single day.</p>
+            <div class="btn-group" id="forgiveButtons">
+                <button class="btn" onclick="forgiveYes()">Yes, Always! 🥰</button>
+                <button class="btn" onclick="playHardToGet()" style="opacity: 0.7;">Play Hard to Get 😋</button>
+            </div>
+            <div id="countdown" style="display: none;">
+                <h2 style="color: #fff;">Prepare for liftoff...</h2>
+                <h1 id="timer" style="font-size: 5rem; -webkit-text-fill-color: #fff;">3</h1>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="valentine">
+        <div class="card">
+            <h1>Be My Valentine? 💘</h1>
+            <p>Let's make this the start of something truly unforgettable.</p>
+            <div class="btn-group">
+                <button class="btn" onclick="valentineYes()">A Thousand Times Yes! 😍</button>
+                <button class="btn" onclick="playHardToGet()" style="opacity: 0.7;">Make me work for it 🤭</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="celebration">
+        <div class="card" style="background: rgba(255, 77, 109, 0.15); border-color: var(--gold);">
+            <h1 style="font-size: clamp(3rem, 12vw, 5rem); margin-bottom: 5px;">You're Mine!</h1>
+            <h2 style="color: var(--gold); letter-spacing: 2px;">FOREVER & ALWAYS</h2>
+            
+            <div class="photo-frame">
+                <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&q=80&w=400" alt="Couple">
+            </div>
+
+            <p style="font-weight: 600; color: #fff;">I'm the luckiest person alive to have you by my side. Let's make endless memories together! 💕</p>
+            
+            <div style="font-size: 2.5rem; display: flex; justify-content: center; gap: 15px;">
+                <span>💖</span>
+                <span>✨</span>
+                <span>👑</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        let isMusicPlaying = false;
+
+        function toggleMusic() {
+            const btn = document.getElementById('musicToggle');
+            if (!isMusicPlaying) {
+                audio.play().catch(e => console.log("Audio play failed:", e));
+                isMusicPlaying = true;
+                btn.innerHTML = '🔊';
+            } else {
+                audio.pause();
+                isMusicPlaying = false;
+                btn.innerHTML = '🎵';
+            }
+        }
+
+        function createBackgroundHearts() {
+            const container = document.getElementById('bgHearts');
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('span');
+                heart.innerHTML = ['❤️', '💕', '💖', '✨'][Math.floor(Math.random() * 4)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.top = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 4 + 3) + 's';
+                heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createBackgroundHearts();
+
+        function createFloatingEmojis(emojis) {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const emoji = document.createElement('div');
+                    emoji.className = 'floating-emoji';
+                    emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                    emoji.style.left = (Math.random() * 70 + 15) + '%';
+                    emoji.style.bottom = '20%';
+                    document.body.appendChild(emoji);
+                    setTimeout(() => emoji.remove(), 3000);
+                }, i * 150);
+            }
+        }
+
+        function nextSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            
+            const sections = ['landing', 'vault', 'smitten', 'memories', 'forgive', 'valentine', 'celebration'];
+            const progress = ((sections.indexOf(id) + 1) / sections.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            if (id === 'celebration') startCelebration();
+        }
+
+        function startJourney() {
+            if (!isMusicPlaying) toggleMusic();
+            nextSection('vault');
+        }
+
+        function playHardToGet() {
+            document.getElementById('gifOverlay').style.display = 'flex';
+        }
+
+        function closeGif() {
+            document.getElementById('gifOverlay').style.display = 'none';
+            const active = document.querySelector('.section.active').id;
+            if (active === 'forgive') forgiveYes();
+            else if (active === 'valentine') valentineYes();
+        }
+
+        function forgiveYes() {
+            document.getElementById('forgiveButtons').style.display = 'none';
+            document.getElementById('countdown').style.display = 'block';
+            let count = 3;
+            const timer = setInterval(() => {
+                document.getElementById('timer').innerText = count;
+                createFloatingEmojis(['💖', '✨']);
+                if (count === 0) {
+                    clearInterval(timer);
+                    nextSection('valentine');
+                }
+                count--;
+            }, 1000);
+        }
+
+        function valentineYes() {
+            nextSection('celebration');
+        }
+
+        function startCelebration() {
+            setInterval(() => {
+                createFloatingEmojis(['💖', '💕', '✨', '🌸', '👑', '💝']);
+            }, 800);
+        }
+
+        // Particle effect for desktop mouse
+        if (window.matchMedia("(pointer: fine)").matches) {
+            document.addEventListener('mousemove', (e) => {
+                if (Math.random() > 0.92) {
+                    const spark = document.createElement('div');
+                    spark.className = 'floating-emoji';
+                    spark.innerHTML = '✨';
+                    spark.style.fontSize = '1rem';
+                    spark.style.left = e.clientX + 'px';
+                    spark.style.top = e.clientY + 'px';
+                    spark.style.animation = 'floatUp 1s forwards';
+                    document.body.appendChild(spark);
+                    setTimeout(() => spark.remove(), 1000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
