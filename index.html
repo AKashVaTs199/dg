@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>For You, My💖</title>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;600&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* ===== RESET & VARIABLES ===== */
         * {
@@ -145,6 +145,10 @@
             touch-action: manipulation;
         }
         .btn:active { transform: scale(0.92); }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--soft-pink);
+        }
 
         /* ===== GIF WRAPPERS ===== */
         .gif-wrapper {
@@ -268,6 +272,56 @@
             cursor: pointer;
             transition: 0.3s;
         }
+        .promise-item:hover {
+            background: rgba(255, 77, 109, 0.2);
+        }
+
+        /* Letter Paper Styles */
+        .letter-paper {
+            background: #fdf6e3;
+            background-image: radial-gradient(#d1d1d1 1px, transparent 0);
+            background-size: 20px 20px;
+            color: #3e2723;
+            padding: 25px;
+            border-radius: 5px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            text-align: left;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+            min-height: 200px;
+            margin: 20px 0;
+            position: relative;
+            transform: rotate(-1deg);
+            border: 1px solid #e0cda9;
+            display: none;
+            animation: fadeIn 1s ease-out forwards;
+            white-space: pre-wrap;
+        }
+        .letter-paper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px) rotate(-1deg); } 
+            to { opacity: 1; transform: translateY(0) rotate(-1deg); } 
+        }
+        
+        .petal {
+            position: fixed;
+            top: -10%;
+            z-index: 1500;
+            pointer-events: none;
+            animation: petalFall linear forwards;
+        }
+        @keyframes petalFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -363,181 +417,6 @@
         </div>
     </section>
 
-
-<!-- 1. HTML STRUCTURE (Add to your sections container) -->
-
-<!-- 1. HTML STRUCTURE (Add to your sections container) -->
-<section class="section" id="letter-gen">
-    <div class="card">
-        <h1>Magical Love Letter ✍️</h1>
-        <p>Let the universe write a letter for you...</p>
-        
-        <!-- The Paper Element -->
-        <div class="letter-paper" id="letterOutput"></div>
-        
-        <button class="btn" id="genBtn" onclick="generateLoveLetter()">Generate Letter ✨</button>
-        <div id="letterLoader" style="display:none; margin: 10px;"><div class="loader"></div></div>
-        
-        <!-- Navigation Button (Hidden until letter is generated) -->
-        <button class="btn btn-secondary" onclick="nextSection('memories')" id="nextAfterLetter" style="display:none; background:rgba(255,255,255,0.1); border:1px solid var(--soft-pink);">Memory Lane 📸</button>
-    </div>
-</section>
-
-<!-- 2. CSS STYLES (Add to your <style> tag) -->
-<style>
-    /* Crucial: Sections are hidden by default. Use .active to show them. */
-    .section {
-        position: absolute;
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.6s ease;
-    }
-
-    .section.active {
-        opacity: 1;
-        visibility: visible;
-        position: relative; /* Changed to relative when active to ensure it takes up space if needed */
-    }
-
-    .letter-paper {
-        background: #fdf6e3;
-        background-image: radial-gradient(#d1d1d1 1px, transparent 0);
-        background-size: 20px 20px;
-        color: #3e2723;
-        padding: 25px;
-        border-radius: 5px;
-        font-family: 'Caveat', cursive; /* Ensure you import this Google Font */
-        font-size: 1.4rem;
-        text-align: left;
-        box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
-        min-height: 200px;
-        margin: 20px 0;
-        position: relative;
-        transform: rotate(-1deg);
-        border: 1px solid #e0cda9;
-        display: none;
-        animation: fadeIn 1s ease-out forwards;
-    }
-    .letter-paper::before {
-        content: '';
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
-        opacity: 0.4;
-        pointer-events: none;
-    }
-    @keyframes fadeIn { 
-        from { opacity: 0; transform: translateY(20px) rotate(-1deg); } 
-        to { opacity: 1; transform: translateY(0) rotate(-1deg); } 
-    }
-    .petal {
-        position: fixed;
-        top: -10%;
-        z-index: 1500;
-        pointer-events: none;
-        animation: petalFall linear forwards;
-    }
-    @keyframes petalFall {
-        0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-        10% { opacity: 0.8; }
-        100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
-    }
-    
-    /* Loader helper */
-    .loader {
-        width: 30px;
-        height: 30px;
-        border: 3px solid #ff85a2;
-        border-bottom-color: transparent;
-        border-radius: 50%;
-        display: inline-block;
-        animation: rotation 1s linear infinite;
-    }
-    @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-</style>
-
-<!-- 3. JAVASCRIPT LOGIC (Add to your <script> tag) -->
-<script>
-    // Navigation helper to show the section
-    function nextSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        const target = document.getElementById(id);
-        if (target) target.classList.add('active');
-    }
-
-    async function generateLoveLetter() {
-        const output = document.getElementById('letterOutput');
-        const loader = document.getElementById('letterLoader');
-        const genBtn = document.getElementById('genBtn');
-        const nextBtn = document.getElementById('nextAfterLetter');
-        const apiKey = ""; // Gemini API Key will be injected at runtime
-
-        genBtn.style.display = 'none';
-        loader.style.display = 'block';
-        output.style.display = 'none';
-
-        createPetalRain();
-
-        try {
-            // Exponential backoff for API call
-            const fetchWithRetry = async (url, options, retries = 5, backoff = 1000) => {
-                try {
-                    const res = await fetch(url, options);
-                    if (!res.ok) throw new Error('API Error');
-                    return res;
-                } catch (err) {
-                    if (retries <= 0) throw err;
-                    await new Promise(resolve => setTimeout(resolve, backoff));
-                    return fetchWithRetry(url, options, retries - 1, backoff * 2);
-                }
-            };
-
-            const response = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: "Write a short, deeply romantic love letter for 'Dorami'. Use soul-stirring, poetic language. Mention the galaxy and eternal love. Keep it under 80 words." }] }]
-                })
-            });
-
-            const data = await response.json();
-            const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "My dearest Dorami, you are the gravity that holds my world together...";
-            
-            output.innerText = text;
-            output.style.display = 'block';
-            nextBtn.style.display = 'inline-block';
-        } catch (error) {
-            output.innerText = "My dearest Dorami, words fail to capture the depth of my love for you. You are my universe, my star, and my home. I love you eternally.";
-            output.style.display = 'block';
-            nextBtn.style.display = 'inline-block';
-        } finally {
-            loader.style.display = 'none';
-        }
-    }
-
-    function createPetalRain() {
-        for (let i = 0; i < 30; i++) {
-            setTimeout(() => {
-                const petal = document.createElement('div');
-                petal.className = 'petal';
-                petal.innerHTML = ['🌸', '🌹', '❤️', '🍃'][Math.floor(Math.random() * 4)];
-                petal.style.left = Math.random() * 100 + 'vw';
-                petal.style.fontSize = (Math.random() * 20 + 15) + 'px';
-                petal.style.animationDuration = (Math.random() * 3 + 3) + 's';
-                document.body.appendChild(petal);
-                setTimeout(() => petal.remove(), 6000);
-            }, i * 100);
-        }
-    }
-</script>
-
-    
-
     <!-- 6. PROMISES -->
     <section class="section" id="promises">
         <div class="card">
@@ -552,11 +431,33 @@
             <div class="promise-item" onclick="createFloatingEmojis(['⏳', '♾️'])">
                 <strong>⏳ Time:</strong> Giving you all my "forever" and every "today".
             </div>
-            <button class="btn" onclick="nextSection('celebration')" style="margin-top: 20px;">The Final Question 💍</button>
+            <button class="btn" onclick="nextSection('letter-gen')" style="margin-top: 20px;">Write Me a Letter ✍️</button>
         </div>
     </section>
 
-    <!-- 7. CELEBRATION -->
+    <!-- 7. MAGICAL LOVE LETTER -->
+    <section class="section" id="letter-gen">
+        <div class="card">
+            <h1>Magical Love Letter ✍️</h1>
+            <p>Let the universe write a letter for you...</p>
+            
+            <!-- The Paper Element -->
+            <div class="letter-paper" id="letterOutput"></div>
+            
+            <button class="btn" id="genBtn" onclick="generateLoveLetter()">Generate Letter ✨</button>
+            <div id="letterLoader" style="display:none; margin: 10px; text-align: center;">
+                <div class="loader" style="display:inline-block;"></div>
+            </div>
+            
+            <!-- Navigation Buttons -->
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                <button class="btn btn-secondary" onclick="nextSection('promises')">Back 🔙</button>
+                <button class="btn" onclick="nextSection('celebration')" id="nextAfterLetter" style="display:none;">Continue 💍</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. CELEBRATION -->
     <section class="section" id="celebration">
         <div class="card" style="border-color: var(--gold);">
             <div class="gif-wrapper">
@@ -564,8 +465,8 @@
             </div>
             <h1>Be My Valentine? 💘</h1>
             <p>You're the first thing I think of when I wake up and the last thing I dream of.</p>
-            <p style="font-weight: 700; color: var(--primary-pink); margin-top: 10px;">I! 💖</p>
-            <p> Dorami 💖 🪐</p>
+            <p style="font-size: 2rem; margin: 20px 0;">I Love You! 💖</p>
+            <p style="font-family: 'Dancing Script', cursive; font-size: 1.5rem;">Dorami 💖 🪐</p>
         </div>
     </section>
 
@@ -620,7 +521,7 @@
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             
-            const sections = ['landing', 'galaxy', 'memories', 'aura', 'special', 'promises', 'celebration'];
+            const sections = ['landing', 'galaxy', 'memories', 'aura', 'special', 'promises', 'letter-gen', 'celebration'];
             const progress = ((sections.indexOf(id) + 1) / sections.length) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
 
@@ -663,7 +564,8 @@
             img.style.display = 'none';
             loader.style.display = 'block';
 
-            const imageUrl = 'gg.jpeg'; 
+            // Create a romantic AI-generated image URL (using placeholder for demo)
+            const imageUrl = 'https://via.placeholder.com/500x300/ff85a2/ffffff?text=You+Are+Beautiful';
             
             img.onload = function() {
                 loader.style.display = 'none';
@@ -674,7 +576,7 @@
             img.onerror = function() {
                 loader.style.display = 'none';
                 placeholder.style.display = 'block';
-                placeholder.innerText = '❌ Image not found.';
+                placeholder.innerText = '✨ You are the most beautiful creation ✨';
             };
             
             img.src = imageUrl;
@@ -686,7 +588,8 @@
                 "You are my favorite magic. 💖", 
                 "I love you more than stars. ✨", 
                 "You make my heart smile. 🥰",
-                "You're the reason I believe in magic. 🌟"
+                "You're the reason I believe in magic. 🌟",
+                "Every moment with you is a treasure. 💎"
             ];
             box.innerText = notes[Math.floor(Math.random() * notes.length)];
             createFloatingEmojis(['✍️', '💖', '✨']);
@@ -728,6 +631,59 @@
                 } else { clearInterval(timer); }
             }, 800);
         }
+
+        // Letter Generation Function
+        async function generateLoveLetter() {
+            const output = document.getElementById('letterOutput');
+            const loader = document.getElementById('letterLoader');
+            const genBtn = document.getElementById('genBtn');
+            const nextBtn = document.getElementById('nextAfterLetter');
+
+            genBtn.style.display = 'none';
+            loader.style.display = 'block';
+            output.style.display = 'none';
+
+            createPetalRain();
+
+            // Simulate API call with timeout (since we don't have actual API key)
+            setTimeout(() => {
+                // Romantic fallback letter
+                const romanticLetters = [
+                    "My dearest Dorami,\n\nYou are the stars that light up my darkest nights, the moon that guides my restless heart. In this vast galaxy, my soul found its home in you. Forever yours, across all dimensions of time and space.\n\nWith all my love, 💖",
+                    
+                    "To my beloved Dorami,\n\nEvery moment without you is like a universe without stars - empty and dark. You bring color to my world, music to my silence, and meaning to my existence. I love you more than all the galaxies combined.\n\nYours eternally, ✨",
+                    
+                    "My precious Dorami,\n\nIf I had a star for every time I thought of you, I'd have a universe. You are my forever, my always, my everything. In you, I found the love I never knew I was looking for.\n\nForever yours, 🌟"
+                ];
+                
+                output.innerText = romanticLetters[Math.floor(Math.random() * romanticLetters.length)];
+                output.style.display = 'block';
+                loader.style.display = 'none';
+                nextBtn.style.display = 'inline-block';
+            }, 2000);
+        }
+
+        function createPetalRain() {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.innerHTML = ['🌸', '🌹', '❤️', '🍃', '✨', '💖'][Math.floor(Math.random() * 6)];
+                    petal.style.left = Math.random() * 100 + 'vw';
+                    petal.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                    petal.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                    document.body.appendChild(petal);
+                    setTimeout(() => petal.remove(), 6000);
+                }, i * 100);
+            }
+        }
+
+        // Initialize the first section
+        window.onload = function() {
+            // Make sure landing is active
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('landing').classList.add('active');
+        };
     </script>
 </body>
 </html>
