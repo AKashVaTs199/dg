@@ -309,7 +309,8 @@
         <div class="card">
             <h1>Hey Beautiful! ✨</h1>
             <p>I made a little digital magic just for you. Ready to peek into my heart?</p>
-            <button class="btn" onclick="startJourney()">Open My Heart 💝</button>
+            <!-- This button now starts the music AND navigates -->
+            <button class="btn" onclick="startJourneyAndPlayMusic()">Open My Heart 💝</button>
         </div>
     </section>
 
@@ -398,6 +399,7 @@
         let ytPlayer;
         let ytReady = false;
         let isMusicPlaying = false;
+        let musicStartAttempted = false; // Track if we've tried to start music
 
         // Load the IFrame Player API code asynchronously
         const tag = document.createElement('script');
@@ -435,6 +437,11 @@
             console.log('YouTube Player Ready');
             ytPlayer.setVolume(40); // Set comfortable volume
             updateMusicStatus('Ready to play');
+            
+            // If we already tried to play music (user clicked button before player was ready), play now
+            if (musicStartAttempted) {
+                startMusic();
+            }
         }
 
         function onPlayerStateChange(event) {
@@ -450,7 +457,47 @@
             document.getElementById('musicToggle').style.opacity = '0.5';
         }
 
-        // Toggle play/pause
+        // Function to start music (called by the Open My Heart button)
+        function startMusic() {
+            if (!ytReady || !ytPlayer) {
+                // Player not ready yet, set flag to try again when ready
+                musicStartAttempted = true;
+                updateMusicStatus('Loading music...');
+                return false;
+            }
+            
+            try {
+                // Check if already playing
+                if (!isMusicPlaying) {
+                    ytPlayer.playVideo();
+                    isMusicPlaying = true;
+                    const btn = document.getElementById('musicToggle');
+                    btn.innerHTML = '🔊';
+                    btn.classList.add('playing');
+                    updateMusicStatus('Now playing: Perfect');
+                }
+                return true;
+            } catch (e) {
+                console.error("Start music error:", e);
+                return false;
+            }
+        }
+
+        // New function for the "Open My Heart" button - starts music AND navigates
+        function startJourneyAndPlayMusic() {
+            // Try to start the music
+            const musicStarted = startMusic();
+            
+            // Always navigate to the next section
+            nextSection('vault');
+            
+            // If music couldn't start yet, show a message
+            if (!musicStarted && !ytReady) {
+                updateMusicStatus('Music will start when ready...');
+            }
+        }
+
+        // Toggle play/pause (for the music toggle button)
         function toggleMusic() {
             const btn = document.getElementById('musicToggle');
             if (!ytReady || !ytPlayer) {
@@ -526,11 +573,6 @@
             const progress = ((sections.indexOf(id) + 1) / sections.length) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
             if (id === 'celebration') startCelebration();
-        }
-
-        function startJourney() { 
-            if (ytReady && !isMusicPlaying) updateMusicStatus('Click 🎵 to play');
-            nextSection('vault'); 
         }
 
         function playHardToGet() { 
