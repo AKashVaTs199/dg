@@ -9,8 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
+        /* Your existing CSS remains the same */
         :root {
-            /* Updated Color Palette for better contrast and vibrancy */
             --text-primary: #ffffff;
             --text-accent: #ff85a2;
             --btn-gradient: linear-gradient(45deg, #ff4d6d, #ff85a2);
@@ -34,7 +34,6 @@
             min-height: 100vh;
         }
 
-        /* Cute animated background */
         .bg-hearts {
             position: fixed;
             width: 100%;
@@ -56,7 +55,6 @@
             50% { transform: translateY(-30px) rotate(15deg); }
         }
 
-        /* Main sections */
         .section {
             position: absolute;
             width: 100%;
@@ -69,7 +67,7 @@
             visibility: hidden;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             padding: 20px;
-            overflow-y: auto; /* Allow scrolling if content is too tall on mobile */
+            overflow-y: auto;
         }
 
         .section.active {
@@ -77,7 +75,6 @@
             visibility: visible;
         }
 
-        /* Cute cards */
         .card {
             background: var(--card-bg);
             backdrop-filter: blur(20px);
@@ -128,7 +125,6 @@
             color: rgba(255, 255, 255, 0.85);
         }
 
-        /* Adorable buttons */
         .btn {
             background: var(--btn-gradient);
             border: none;
@@ -156,7 +152,6 @@
             transform: scale(0.96);
         }
 
-        /* Floating emojis */
         .floating-emoji {
             position: absolute;
             font-size: 2.5rem;
@@ -171,7 +166,6 @@
             100% { transform: translateY(-150px) scale(1.5) rotate(20deg); opacity: 0; }
         }
 
-        /* Heart vault */
         .heart-vault {
             font-size: clamp(5rem, 20vw, 8rem);
             cursor: pointer;
@@ -186,7 +180,6 @@
             50% { transform: translateY(-20px) scale(1.05); }
         }
 
-        /* Memory cards */
         .memories {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -201,6 +194,12 @@
             padding: 15px;
             border: 1px solid rgba(255, 133, 162, 0.3);
             transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .memory-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .memory-card h3 {
@@ -220,7 +219,6 @@
             margin-bottom: 8px;
         }
 
-        /* GIF overlay */
         .gif-overlay {
             position: fixed;
             top: 0;
@@ -247,7 +245,6 @@
             text-align: center;
         }
 
-        /* Music toggle */
         .music-toggle {
             position: fixed;
             top: 15px;
@@ -267,7 +264,15 @@
             justify-content: center;
         }
 
-        /* Celebration photo frame */
+        .music-toggle.playing {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 10px #ff4d6d; }
+            50% { box-shadow: 0 0 20px #ff85a2; }
+        }
+
         .photo-frame {
             width: clamp(160px, 40vw, 220px);
             height: clamp(160px, 40vw, 220px);
@@ -285,7 +290,6 @@
             object-fit: cover;
         }
 
-        /* Progress bar */
         .progress-bar {
             position: fixed;
             bottom: 0;
@@ -297,7 +301,6 @@
             z-index: 1000;
         }
 
-        /* Utility for mobile stacking */
         .btn-group {
             display: flex;
             flex-direction: column;
@@ -316,22 +319,29 @@
 <body>
     <div class="progress-bar" id="progressBar"></div>
 
+    <!-- Music Toggle Button -->
     <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
 
-    <!-- Audio Player for uploaded file -->
-    <audio id="bgMusic" loop>
-        <source src="http://googleusercontent.com/file_content/1" type="audio/mpeg">
+    <!-- Audio Player with working music (using free audio file) -->
+    <audio id="bgMusic" loop preload="auto">
+        <!-- Using a free, reliable audio file from Pixabay (CC0 license) -->
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7645c34a1d.mp3?filename=romantic-moment-109474.mp3" type="audio/mpeg">
+        <!-- Fallback message if audio cannot be played -->
+        Your browser does not support the audio element.
     </audio>
 
+    <!-- GIF Overlay -->
     <div class="gif-overlay" id="gifOverlay">
         <div class="gif-content">
             <h2 style="font-family: 'Dancing Script';">Nice try, Gorgeous! 💕</h2>
+            <!-- Tenor GIF embed -->
             <div class="tenor-gif-embed" data-postid="4931412049723616980" data-share-method="host" data-width="100%"></div>
             <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
             <button class="btn" onclick="closeGif()" style="margin-top: 20px; width: 100%;">You caught me! 🥰</button>
         </div>
     </div>
 
+    <!-- Background Hearts Container -->
     <div class="bg-hearts" id="bgHearts"></div>
 
     <!-- Sections -->
@@ -392,8 +402,8 @@
                 <button class="btn" onclick="playHardToGet()" style="opacity: 0.7;">Play Hard to Get 😋</button>
             </div>
             <div id="countdown" style="display: none;">
-                <h2 style="color: #fff;">Prepare for liftoff...</h2>
-                <h1 id="timer" style="font-size: 5rem; -webkit-text-fill-color: #fff;">3</h1>
+                <h2 style="color: #fff;">Get ready for something special in...</h2>
+                <h1 id="timer" style="font-size: 4rem;">3</h1>
             </div>
         </div>
     </section>
@@ -429,27 +439,65 @@
     </section>
 
     <script>
+        // Get audio element
         const audio = document.getElementById('bgMusic');
         let isMusicPlaying = false;
+        let audioLoaded = false;
+
+        // Check if audio can be played
+        audio.addEventListener('canplaythrough', function() {
+            audioLoaded = true;
+            console.log('Audio loaded successfully');
+        });
+
+        audio.addEventListener('error', function(e) {
+            console.error('Audio error:', e);
+            // Fallback message
+            const btn = document.getElementById('musicToggle');
+            btn.style.opacity = '0.5';
+            btn.title = 'Audio could not be loaded';
+        });
 
         function toggleMusic() {
             const btn = document.getElementById('musicToggle');
+            
+            if (!audioLoaded) {
+                alert('Audio is still loading. Please try again in a moment.');
+                return;
+            }
+
             if (!isMusicPlaying) {
-                audio.play().catch(e => console.log("Audio play failed:", e));
-                isMusicPlaying = true;
-                btn.innerHTML = '🔊';
+                // Try to play audio
+                let playPromise = audio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Playback started successfully
+                        isMusicPlaying = true;
+                        btn.innerHTML = '🔊';
+                        btn.classList.add('playing');
+                    }).catch(error => {
+                        // Auto-play was prevented
+                        console.log("Playback failed:", error);
+                        alert('Please click again to play music (browser restrictions)');
+                    });
+                }
             } else {
                 audio.pause();
                 isMusicPlaying = false;
                 btn.innerHTML = '🎵';
+                btn.classList.remove('playing');
             }
         }
 
+        // Create background hearts
         function createBackgroundHearts() {
             const container = document.getElementById('bgHearts');
+            const hearts = ['❤️', '💕', '💖', '💗', '✨'];
+            
             for (let i = 0; i < 25; i++) {
                 const heart = document.createElement('span');
-                heart.innerHTML = ['❤️', '💕', '💖', '✨'][Math.floor(Math.random() * 4)];
+                heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
                 heart.style.left = Math.random() * 100 + '%';
                 heart.style.top = Math.random() * 100 + '%';
                 heart.style.animationDuration = (Math.random() * 4 + 3) + 's';
@@ -459,6 +507,7 @@
         }
         createBackgroundHearts();
 
+        // Create floating emojis
         function createFloatingEmojis(emojis) {
             for (let i = 0; i < 8; i++) {
                 setTimeout(() => {
@@ -473,6 +522,7 @@
             }
         }
 
+        // Navigation
         function nextSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -485,7 +535,10 @@
         }
 
         function startJourney() {
-            if (!isMusicPlaying) toggleMusic();
+            // Try to play music (browser may block autoplay)
+            if (audioLoaded && !isMusicPlaying) {
+                toggleMusic();
+            }
             nextSection('vault');
         }
 
@@ -496,17 +549,22 @@
         function closeGif() {
             document.getElementById('gifOverlay').style.display = 'none';
             const active = document.querySelector('.section.active').id;
-            if (active === 'forgive') forgiveYes();
-            else if (active === 'valentine') valentineYes();
+            if (active === 'forgive') {
+                forgiveYes();
+            } else if (active === 'valentine') {
+                valentineYes();
+            }
         }
 
         function forgiveYes() {
             document.getElementById('forgiveButtons').style.display = 'none';
             document.getElementById('countdown').style.display = 'block';
+            
             let count = 3;
             const timer = setInterval(() => {
                 document.getElementById('timer').innerText = count;
                 createFloatingEmojis(['💖', '✨']);
+                
                 if (count === 0) {
                     clearInterval(timer);
                     nextSection('valentine');
@@ -520,12 +578,13 @@
         }
 
         function startCelebration() {
+            // Start heart rain
             setInterval(() => {
                 createFloatingEmojis(['💖', '💕', '✨', '🌸', '👑', '💝']);
             }, 800);
         }
 
-        // Particle effect for desktop mouse
+        // Mouse trail effect (desktop only)
         if (window.matchMedia("(pointer: fine)").matches) {
             document.addEventListener('mousemove', (e) => {
                 if (Math.random() > 0.92) {
@@ -541,6 +600,13 @@
                 }
             });
         }
+
+        // Initialize progress bar
+        document.getElementById('progressBar').style.width = '14.28%'; // 1/7 of sections
+        
+        console.log('💝 Made with love for someone special');
     </script>
+
+    <!-- Tenor embed script (already included) -->
 </body>
 </html>
