@@ -504,11 +504,16 @@
     <!-- Hidden YouTube Player -->
     <div id="youtube-player"></div>
 
+    <!-- Fallback audio (if YouTube fails) -->
+    <audio id="fallbackAudio" loop preload="none" style="display:none">
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0ec034cf1f.mp3?filename=romantic-moment-109474.mp3" type="audio/mpeg">
+    </audio>
+
     <!-- GIF Overlay (for playful rejection) -->
     <div class="gif-overlay" id="gifOverlay" onclick="closeGif()">
         <div class="gif-content">
             <h2 style="font-family: 'Dancing Script';">Nice try! 😘</h2>
-            <img src="https://media1.tenor.com/m/8Rt-x7U1jJAAAAAC/milk-and-mocha-cute.gif" alt="Cute couple GIF">
+            <img src="https://media1.tenor.com/m/8Rt-x7U1jJAAAAAC/milk-and-mocha-cute.gif" alt="Cute couple GIF" loading="lazy">
             <p style="color: var(--soft-pink);">You're stuck with me forever!</p>
             <button class="btn" onclick="closeGif(event)">I give up! 🥰</button>
         </div>
@@ -634,12 +639,16 @@
 
     <script>
         // =============================================
-        // YOUTUBE API
+        // YOUTUBE API with mobile fixes
         // =============================================
         let ytPlayer;
         let ytReady = false;
         let isMusicPlaying = false;
         let musicStartAttempted = false;
+        let useFallback = false; // fallback to HTML5 audio if YouTube fails
+
+        // Fallback audio element
+        const fallbackAudio = document.getElementById('fallbackAudio');
 
         function loadYouTubeAPI() {
             const tag = document.createElement('script');
@@ -662,7 +671,8 @@
                     'playsinline': 1,
                     'rel': 0,
                     'showinfo': 0,
-                    'playlist': 'SAcpESN_Fk4'
+                    'playlist': 'SAcpESN_Fk4',
+                    'mute': 1 // start muted to comply with mobile autoplay policies
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -675,6 +685,7 @@
         function onPlayerReady(event) {
             ytReady = true;
             console.log('YouTube Player Ready');
+            // Don't unmute yet – we'll unmute on first user interaction
             ytPlayer.setVolume(40);
             updateMusicStatus('Ready');
             if (musicStartAttempted) startMusic();
@@ -686,11 +697,37 @@
 
         function onPlayerError(event) {
             console.error('YouTube Error:', event.data);
-            updateMusicStatus('Unavailable');
-            document.getElementById('musicToggle').style.opacity = '0.5';
+            // Switch to fallback audio
+            useFallback = true;
+            updateMusicStatus('Using fallback');
+            // If music was attempted, try fallback
+            if (musicStartAttempted) startMusic();
         }
 
         function startMusic() {
+            if (useFallback) {
+                // Use HTML5 audio
+                try {
+                    fallbackAudio.volume = 0.4;
+                    let playPromise = fallbackAudio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            isMusicPlaying = true;
+                            const btn = document.getElementById('musicToggle');
+                            btn.innerHTML = '🔊';
+                            btn.classList.add('playing');
+                            updateMusicStatus('Playing (fallback)');
+                        }).catch(e => {
+                            console.log('Fallback play failed:', e);
+                            updateMusicStatus('Tap to play');
+                        });
+                    }
+                } catch (e) {
+                    console.error('Fallback error:', e);
+                }
+                return true;
+            }
+
             if (!ytReady || !ytPlayer) {
                 musicStartAttempted = true;
                 updateMusicStatus('Loading...');
@@ -698,6 +735,8 @@
             }
             try {
                 if (!isMusicPlaying) {
+                    // Unmute before playing (important for mobile)
+                    ytPlayer.unMute();
                     ytPlayer.playVideo();
                     isMusicPlaying = true;
                     const btn = document.getElementById('musicToggle');
@@ -714,12 +753,32 @@
 
         function handleMusicButtonClick() {
             const btn = document.getElementById('musicToggle');
+            
+            // If fallback is active, use that
+            if (useFallback) {
+                if (!isMusicPlaying) {
+                    fallbackAudio.play();
+                    isMusicPlaying = true;
+                    btn.innerHTML = '🔊';
+                    btn.classList.add('playing');
+                    updateMusicStatus('Playing (fallback)');
+                } else {
+                    fallbackAudio.pause();
+                    isMusicPlaying = false;
+                    btn.innerHTML = '🎵';
+                    btn.classList.remove('playing');
+                    updateMusicStatus('Paused');
+                }
+                return;
+            }
+
             if (!ytReady || !ytPlayer) {
                 alert("Music loading... tap again");
                 return;
             }
             try {
                 if (!isMusicPlaying) {
+                    ytPlayer.unMute();
                     ytPlayer.playVideo();
                     isMusicPlaying = true;
                     btn.innerHTML = '🔊';
@@ -738,15 +797,25 @@
         }
 
         function handleEnterHeartClick() {
-            if (!isMusicPlaying && ytReady && ytPlayer) {
-                ytPlayer.playVideo();
-                isMusicPlaying = true;
-                const btn = document.getElementById('musicToggle');
-                btn.innerHTML = '🔊';
-                btn.classList.add('playing');
-                updateMusicStatus('Playing Perfect');
-            } else if (!ytReady) {
-                musicStartAttempted = true;
+            if (!isMusicPlaying) {
+                if (useFallback) {
+                    fallbackAudio.play();
+                    isMusicPlaying = true;
+                    const btn = document.getElementById('musicToggle');
+                    btn.innerHTML = '🔊';
+                    btn.classList.add('playing');
+                    updateMusicStatus('Playing (fallback)');
+                } else if (ytReady && ytPlayer) {
+                    ytPlayer.unMute();
+                    ytPlayer.playVideo();
+                    isMusicPlaying = true;
+                    const btn = document.getElementById('musicToggle');
+                    btn.innerHTML = '🔊';
+                    btn.classList.add('playing');
+                    updateMusicStatus('Playing Perfect');
+                } else if (!ytReady) {
+                    musicStartAttempted = true;
+                }
             }
             nextSection('vault');
         }
@@ -912,9 +981,13 @@
             }, { passive: false });
         });
 
+        // Load YouTube API
         loadYouTubeAPI();
+
+        // Initial progress
         document.getElementById('progressBar').style.width = '12.5%';
-        console.log('💝 Enhanced love story with "Perfect"');
+        
+        console.log('💝 Enhanced love story with "Perfect" (mobile optimized)');
     </script>
 </body>
 </html>
