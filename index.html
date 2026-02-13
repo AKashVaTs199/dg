@@ -308,9 +308,7 @@
             <div class="gif-wrapper">
                 <div class="tenor-gif-embed" data-postid="14717339306229897277" data-share-method="host" data-aspect-ratio="1" data-width="100%"><a href="https://tenor.com/view/anuragita-anurag-yogita-couple-art-love-gif-14717339306229897277">Anuragita Yogita Sticker</a></div>
             </div>
-            <div class="polaroid">
-                <img src="https://images.unsplash.com/photo-1516589174184-c68526572afc?auto=format&fit=crop&q=80&w=400" alt="love">
-            </div>
+         
             <p>Every moment spent with you is a treasure I keep locked in my heart forever.</p>
             <button class="btn" onclick="nextSection('aura')">Your Aura ✨</button>
         </div>
@@ -339,7 +337,11 @@
             
             <div class="generated-image-container" id="imageContainer">
                 <div class="loader" id="imageLoader"></div>
-                <img id="magicImage" src="" alt="Magic Portrait">
+                <img id="magicImage" src="" alt="Magic Portrait"  style="
+    object-fit: contain;
+    max-width: 100%;
+    max-height: inherit;
+">
                 <span id="imagePlaceholder" style="color: var(--soft-pink); opacity: 0.6; padding: 20px;">✨ Click Portrait to see magic ✨</span>
             </div>
 
