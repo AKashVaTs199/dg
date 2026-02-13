@@ -48,9 +48,29 @@
             animation: float 8s infinite ease-in-out;
             user-select: none;
         }
+        #youtube-player {
+    display: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-40px) rotate(15deg); }
+        }
+
+        /* Hidden YouTube Player - COMPLETELY HIDDEN */
+        #youtube-player {
+            display: none;
+            position: absolute;
+            width: 0;
+            height: 0;
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
         }
 
         /* ===== SECTION & CARD STYLES ===== */
@@ -302,9 +322,8 @@
     <button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
     <div class="music-status" id="musicStatus">🎵 Click heart to play</div>
 
-    <!-- Hidden YouTube Player Container -->
-    <div id="youtube-player
-    display: none;"></div>
+    <!-- Hidden YouTube Player Container - COMPLETELY HIDDEN with display:none -->
+    <div id="youtube-player"></div>
 
     <div class="bg-hearts" id="bgHearts"></div>
 
@@ -456,7 +475,7 @@
 
         function onPlayerReady(event) {
             ytReady = true;
-            console.log('YouTube Player Ready');
+            console.log('YouTube Player Ready (hidden)');
             ytPlayer.setVolume(40); // Set comfortable volume
             updateMusicStatus('Ready to play');
             
@@ -681,7 +700,7 @@
         // Initial progress
         document.getElementById('progressBar').style.width = '12.5%'; // 1/8 sections
         
-        console.log('💝 Made with love - featuring "Perfect" by Ed Sheeran');
+        console.log('💝 Made with love - featuring "Perfect" by Ed Sheeran (hidden player)');
     </script>
 </body>
 </html>
