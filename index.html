@@ -156,25 +156,29 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        .polaroid {
-            background: white;
-            padding: 10px 10px 30px 10px;
-            border-radius: 4px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            width: 180px;
-            margin: 20px auto;
-            transform: rotate(-3deg);
-            animation: floatPolaroid 4s infinite ease-in-out;
+        /* ===== COUNTER GRID ===== */
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
         }
-        @keyframes floatPolaroid {
-            0%, 100% { transform: rotate(-3deg) translateY(0); }
-            50% { transform: rotate(3deg) translateY(-10px); }
+        .timer-box {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 5px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 77, 109, 0.3);
         }
-        .polaroid img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 2px;
+        .timer-num {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+        .timer-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            opacity: 0.7;
         }
 
         /* Progress Bar */
@@ -290,13 +294,21 @@
         </div>
     </section>
 
-    <!-- 2. GALAXY -->
+    <!-- 2. GALAXY & COUNTER -->
     <section class="section" id="galaxy">
         <div class="card">
             <h1>The Galaxy of Us 🌌</h1>
+            <p>Time since I fell for you: ❤️</p>
+            
+            <div class="timer-grid">
+                <div class="timer-box"><span class="timer-num" id="days">0</span><span class="timer-label">Days</span></div>
+                <div class="timer-box"><span class="timer-num" id="hours">0</span><span class="timer-label">Hrs</span></div>
+                <div class="timer-box"><span class="timer-num" id="mins">0</span><span class="timer-label">Min</span></div>
+                <div class="timer-box"><span class="timer-num" id="secs">0</span><span class="timer-label">Sec</span></div>
+            </div>
+
             <p>If every star was a reason why I love you, even the whole sky wouldn't be enough.</p>
             <div style="font-size: 3rem; margin: 15px 0;">🔭 ✨ 🪐</div>
-            <p style="font-style: italic; color: var(--gold);">"In a room full of art, I'd still stare at you."</p>
             <button class="btn" onclick="nextSection('memories')">See Our Memories 📸</button>
         </div>
     </section>
@@ -337,11 +349,7 @@
             
             <div class="generated-image-container" id="imageContainer">
                 <div class="loader" id="imageLoader"></div>
-                <img id="magicImage" src="" alt="Magic Portrait"  style="
-    object-fit: cover;
-    max-width: 100%;
-    max-height: inherit;
-">
+                <img id="magicImage" src="" alt="Magic Portrait" style="object-fit: cover; max-width: 100%; max-height: inherit;">
                 <span id="imagePlaceholder" style="color: var(--soft-pink); opacity: 0.6; padding: 20px;">✨ Click Portrait to see magic ✨</span>
             </div>
 
@@ -390,6 +398,9 @@
     <script>
         const audio = document.getElementById('bgMusic');
         let isMusicPlaying = false;
+        
+        // SET YOUR START DATE HERE (Year, Month Index 0-11, Day)
+        const fallingInLoveDate = new Date(2025, 0, 1); 
 
         function startJourney() {
             toggleMusic();
@@ -412,6 +423,24 @@
             }
         }
 
+        function updateCounter() {
+            const now = new Date();
+            const diff = now - fallingInLoveDate;
+
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('days').innerText = d;
+            document.getElementById('hours').innerText = h;
+            document.getElementById('mins').innerText = m;
+            document.getElementById('secs').innerText = s;
+        }
+
+        // Run counter update every second
+        setInterval(updateCounter, 1000);
+
         function nextSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -421,7 +450,10 @@
             document.getElementById('progressBar').style.width = progress + '%';
 
             document.getElementById('stars-container').style.display = (id === 'galaxy') ? 'block' : 'none';
-            if(id === 'galaxy') initStars();
+            if(id === 'galaxy') {
+                initStars();
+                updateCounter();
+            }
             
             if(id === 'celebration') startFinalCelebration();
         }
@@ -447,35 +479,27 @@
             createFloatingEmojis([emoji, '✨', '💖']);
         }
 
-        // FIXED: Working Portrait Button with your image
         function generatePortrait() {
             const placeholder = document.getElementById('imagePlaceholder');
             const loader = document.getElementById('imageLoader');
             const img = document.getElementById('magicImage');
 
-            // Hide placeholder, show loader
             placeholder.style.display = 'none';
             img.style.display = 'none';
             loader.style.display = 'block';
 
-            // Your image path - since HTML is in dg folder, use relative path
-            const imageUrl = 'gg.jpeg'; // Make sure this file is in the same dg folder
+            const imageUrl = 'gg.jpeg'; 
             
-            // Alternative: If you want to use the WhatsApp image, use this instead:
-            // const imageUrl = 'WhatsApp Image 2026-02-13 at 6.41.20 PM.jpeg';
-
             img.onload = function() {
                 loader.style.display = 'none';
                 img.style.display = 'block';
                 createFloatingEmojis(['✨', '🎨', '🌟']);
-                console.log('✅ Image loaded successfully');
             };
             
             img.onerror = function() {
                 loader.style.display = 'none';
                 placeholder.style.display = 'block';
-                placeholder.innerText = '❌ Image not found. Please check filename';
-                console.error('❌ Failed to load image:', imageUrl);
+                placeholder.innerText = '❌ Image not found.';
             };
             
             img.src = imageUrl;
