@@ -403,7 +403,7 @@
             
             <div class="generated-image-container" id="imageContainer">
                 <div class="loader" id="imageLoader"></div>
-                <img id="magicImage" src="" alt="Magic Portrait" style="object-fit: cover; max-width: 100%; max-height: inherit;">
+                              <img id="magicImage" src="" alt="Magic Portrait" style="object-fit: cover; max-width: 100%; max-height: inherit;">
                 <span id="imagePlaceholder" style="color: var(--soft-pink); opacity: 0.6; padding: 20px;">✨ Click Portrait to see magic ✨</span>
             </div>
 
@@ -465,7 +465,7 @@
             </div>
             <h1>Be My Valentine? 💘</h1>
             <p>You're the first thing I think of when I wake up and the last thing I dream of.</p>
-            <p style="font-size: 2rem; margin: 20px 0;">I Love You! 💖</p>
+            <p style="font-size: 2rem; margin: 20px 0;">I 💖</p>
             <p style="font-family: 'Dancing Script', cursive; font-size: 1.5rem;">Dorami 💖 🪐</p>
         </div>
     </section>
@@ -555,7 +555,7 @@
             createFloatingEmojis([emoji, '✨', '💖']);
         }
 
-        function generatePortrait() {
+   function generatePortrait() {
             const placeholder = document.getElementById('imagePlaceholder');
             const loader = document.getElementById('imageLoader');
             const img = document.getElementById('magicImage');
@@ -564,8 +564,7 @@
             img.style.display = 'none';
             loader.style.display = 'block';
 
-            // Create a romantic AI-generated image URL (using placeholder for demo)
-            const imageUrl = 'https://via.placeholder.com/500x300/ff85a2/ffffff?text=You+Are+Beautiful';
+            const imageUrl = 'gg.jpeg'; 
             
             img.onload = function() {
                 loader.style.display = 'none';
@@ -576,7 +575,7 @@
             img.onerror = function() {
                 loader.style.display = 'none';
                 placeholder.style.display = 'block';
-                placeholder.innerText = '✨ You are the most beautiful creation ✨';
+                placeholder.innerText = '❌ Image not found.';
             };
             
             img.src = imageUrl;
